@@ -55,3 +55,44 @@ class RestrauntOrderManagement:
         currency_dropdown.current(0)
         self.currency_var.trace('w', self.update_menue.prices)
                                
+        order_button = ttk.Button(frame,
+                                   text="Place Order",
+                                   command=self.place_order,)
+        order_button.grid(row=len(self.menue_items)+2, columnspan=3, padx=10, pady=10)
+
+    def setup_background(self, root):
+        bg_width, bg_height = 800, 600
+        canvas = tk.Canvas(root, width=bg_width, height=bg_height)
+        canvas.pack()
+
+    def update_menue_prices(self, *args):
+        currency = self.currency_var.get()
+        symbol = "Rs" if currency == "PKR" else "$"
+        rate = self.exchange_rate if currency == "PKR" else 1 for item, label in self.menue_labels.items():
+            price = self.menue_items[item] * rate
+            label.config(text=f"{item} ({symbol}{price})")
+
+    def place_order(self):
+        order_summary = "Order Summart:\n"
+        currency  =self.currency_var.get()
+        symbol = "Rs" if currency == "PKR" else "$"
+        rate = self.exchange_rate if currency == "PKR" else 1 for item, entry in self.menue_quantities.items():
+            quantity = entry.get()
+            quantity = int(quantity)
+            price = self.menue_items[item] * rate
+            cost = quantity + price
+            total_cost += cost
+            if quantity > 0:
+                order_summary += f"{item}: {quantity}X({symbol}{price}) = {symbol}{cost}"
+            if total_cost > 0:
+                order_summary += f"\nTotal Cost:{symbol}{cost}"
+                messagebox.showinfo("Order Placed", order_summary)
+            else:
+                messagebox.showerror("Error")
+
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = RestrauntOrderManagement(root)
+    root.geometry("800x600")
+    root.mainloop()
